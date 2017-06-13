@@ -83,7 +83,15 @@ private:
     /* add write protect*/
     static bool protectMemory(void* addr, uint32_t size);
 
-    // Load bias.
+    // extra function
+    void phdr_table_get_dynamic_section(const Elf_Phdr* phdr_table,
+                                        int               phdr_count,
+                                        Elf_Addr        load_bias,
+                                        Elf_Dyn**       dynamic,
+                                        size_t*           dynamic_count,
+                                        Elf_Word*       dynamic_flags);
+
+    // variables
     Elf_Addr load_bias_ = 0;
     // elf info
     Elf_Ehdr* header_ = nullptr;
@@ -105,15 +113,10 @@ private:
 private:
     bool check_ehdr = true;
     bool unprotect_got_memory = false;
+
 };
 
 
-void
-phdr_table_get_dynamic_section(const Elf_Phdr* phdr_table,
-                               int               phdr_count,
-                               Elf_Addr        load_bias,
-                               Elf_Dyn**       dynamic,
-                               size_t*           dynamic_count,
-                               Elf_Word*       dynamic_flags);
+
 
 #endif //FAGOTHOOK_FAGOTHOOK_H

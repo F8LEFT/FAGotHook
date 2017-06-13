@@ -99,8 +99,7 @@ bool FAGotHook::VerifyElfHeader() {
  * Return:
  *   void
  */
-void
-phdr_table_get_dynamic_section(const Elf_Phdr* phdr_table,
+void FAGotHook::phdr_table_get_dynamic_section(const Elf_Phdr* phdr_table,
                                int               phdr_count,
                                Elf_Addr        load_bias,
                                Elf_Dyn**       dynamic,

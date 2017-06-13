@@ -18,4 +18,4 @@ else()
 endif()
 
 target_link_libraries( ${ProjectName}
-                       ${FA_EXTLIB} )
+                       ${FA_EXTLIB} dl)

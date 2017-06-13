@@ -54,11 +54,12 @@ typedef Elf64_Word Elf_Word;
 class FAGotHook {
 public:
     struct Config {
-        bool check_ehdr;
-        bool unprotect_got_memory;
+        bool check_ehdr;            // do verify so file elf header
+        bool unprotect_got_memory;  // unprotect got table memory when parse data
     };
 
-    FAGotHook(const char *libName, Config* config = nullptr);
+    // FAGotHook will read memory data from map with mapName.
+    FAGotHook(const char *mapName, Config* config = nullptr);
 
     bool is_valid() { return is_valid_; }
 

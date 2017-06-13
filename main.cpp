@@ -41,6 +41,8 @@ void test() {
     cfg.check_ehdr = false;
     cfg.unprotect_got_memory = true;
 
+    // so name from /proc/self/maps
+    // FAGotHook will try to parse so data from memoy.
     FAGotHook faGotHook("libFAGotHook.so", &cfg);
     if(faGotHook.is_valid()) {
         faGotHook.rebindFunc((Elf_Addr) pfopen, (Elf_Addr) myFopen);

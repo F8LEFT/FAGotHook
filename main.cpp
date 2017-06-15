@@ -29,8 +29,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
 #include <stdio.h>
 #include "FAGotHook.h"
 
-void myFopen() {
-    FLOGD(My Fopen has been invoked);
+void myFopen(const char * __restrict r1, const char * __restrict r2) {
+    FLOGD(My Fopen has been invoked %s %s, r1, r2);
 }
 
 void test() {
@@ -40,6 +40,7 @@ void test() {
     FAGotHook::Config cfg;
     cfg.check_ehdr = false;
     cfg.unprotect_got_memory = true;
+    cfg.with_local_func = true;
 
     // so name from /proc/self/maps
     // FAGotHook will try to parse so data from memoy.

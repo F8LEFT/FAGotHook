@@ -56,6 +56,7 @@ public:
     struct Config {
         bool check_ehdr;            // do verify so file elf header
         bool unprotect_got_memory;  // unprotect got table memory when parse data
+        bool with_local_func;       // collect local func in the same time
     };
 
     // FAGotHook will read memory data from map with mapName.
@@ -91,7 +92,10 @@ private:
                                         size_t*           dynamic_count,
                                         Elf_Word*       dynamic_flags);
 
+
     // variables
+    std::string name;
+
     Elf_Addr load_bias_ = 0;
     // elf info
     Elf_Ehdr* header_ = nullptr;
@@ -108,12 +112,14 @@ private:
     Elf_Addr * plt_got = nullptr;
     Elf_Addr * got_start = nullptr;
     Elf_Addr * got_end = nullptr;
+
+    Elf_Dyn* dynamic_start = nullptr;
+    size_t dynamic_count = 0;
     // feature
-    std::string name;
 private:
     bool check_ehdr = true;
     bool unprotect_got_memory = false;
-
+    bool with_local_func = false;
 };
 
 

@@ -20,6 +20,7 @@ FAGotHook::FAGotHook(const char *libName, Config* config)
     if(config != nullptr) {
         check_ehdr = config->check_ehdr;
         unprotect_got_memory = config->unprotect_got_memory;
+        with_local_func = config->with_local_func;
     }
 
     // load from map
@@ -187,27 +188,24 @@ bool FAGotHook::CheckPhdr(Elf_Addr loaded) {
 
 bool FAGotHook::ReadSoInfo() {
 
-    Elf_Dyn *dynamic;
-    size_t dynamic_count;
     Elf_Word dynamic_flags;
 
 
     /* Extract dynamic section */
-    phdr_table_get_dynamic_section(loaded_phdr_, phdr_num_, load_bias_, &dynamic,
+    phdr_table_get_dynamic_section(loaded_phdr_, phdr_num_, load_bias_, &dynamic_start,
                                    &dynamic_count, &dynamic_flags);
-    if(dynamic == nullptr) {
+    if(dynamic_start == nullptr) {
         FLOGE(%s has No valid dynamic phdr data, name.c_str());
         return false;
     }
 
     // Extract useful information from dynamic section.
-    for (Elf_Dyn* d = dynamic; d->d_tag != DT_NULL; ++d) {
+    for (Elf_Dyn* d = dynamic_start; d->d_tag != DT_NULL; ++d) {
         switch(d->d_tag){
             case DT_PLTRELSZ:
                 plt_rel_count = d->d_un.d_val / sizeof(Elf_Rel);
                 break;
             case DT_PLTGOT:
-                /* Save this in case we decide to do lazy binding. We don't yet. */
                 plt_got = (Elf_Addr *)(load_bias_ + d->d_un.d_ptr);
                 break;
             default:
@@ -223,14 +221,20 @@ bool FAGotHook::ReadGotInfo() {
     }
 
     got_start = plt_got;
+    // skip empty padding
     for(auto i = 0; i < 4; i++, got_start++) {
         if(*got_start != 0) {
             break;
         }
     }
     got_end = got_start + plt_rel_count;
+    if(with_local_func) {
+        got_start = (Elf_Addr *) (dynamic_start + dynamic_count);
+    }
+
+
     if(unprotect_got_memory) {
-        unProtectMemory(got_start, plt_rel_count * sizeof(Elf_Addr));
+        unProtectMemory(got_start, got_end - got_start);
     }
     return true;
 }

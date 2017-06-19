@@ -50,7 +50,7 @@ void test() {
     }
 
     fopen("/data/data/f8left.fagothook/cachefile", "r");
-
+    faGotHook.rebindFunc((Elf_Addr)myFopen, (Elf_Addr)pfopen);
 }
 
 

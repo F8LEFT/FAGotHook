@@ -258,6 +258,7 @@ bool FAGotHook::rebindFunc(Elf_Addr originalFunc, Elf_Addr newFunc) {
             return true;
         }
     }
+    FLOGE(Unable to hook function %s %p into %p, name.c_str(), originalFunc, newFunc);
     return false;
 }
 
